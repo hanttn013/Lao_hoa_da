@@ -5,7 +5,48 @@ Tài liệu này hướng dẫn bạn cách thiết lập, tải dataset, đổi
 
 ---
 
-## 1. CẤU TRÚC DỰ ÁN CHUẨN HÓA
+## 1. KHỞI TẠO VÀ KÍCH HOẠT MÔI TRƯỜNG ẢO (.VENV)
+
+Khi clone code về máy mới (Windows / Linux), bạn thực hiện các bước sau để tạo và kích hoạt môi trường:
+
+### Trên Windows (Command Prompt hoặc PowerShell):
+```powershell
+# 1. Di chuyển vào thư mục dự án
+cd ttcn
+
+# 2. Tạo môi trường ảo tên .venv
+python -m venv .venv
+
+# 3. Kích hoạt môi trường ảo:
+# Nếu dùng PowerShell:
+.\.venv\Scripts\Activate.ps1
+# (Nếu PowerShell báo lỗi Script Execution Policy, chạy lệnh: Set-ExecutionPolicy Unrestricted -Scope Process rồi kích hoạt lại)
+# Nếu dùng CMD:
+.\.venv\Scripts\activate.bat
+
+# 4. Nâng cấp pip và cài đặt các thư viện cần thiết:
+python -m pip install --upgrade pip
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+pip install mediapipe opencv-python scikit-image scipy pillow tqdm matplotlib gdown kagglehub monai einops yacs
+```
+
+### Trên Linux / Ubuntu / Google Colab:
+```bash
+# 1. Tạo môi trường ảo
+python3 -m venv .venv
+
+# 2. Kích hoạt môi trường ảo
+source .venv/bin/activate
+
+# 3. Cài đặt các thư viện
+pip install --upgrade pip
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+pip install mediapipe opencv-python scikit-image scipy pillow tqdm matplotlib gdown kagglehub monai einops yacs
+```
+
+---
+
+## 2. CẤU TRÚC DỰ ÁN CHUẨN HÓA
 
 ```
 ttcn/
