@@ -1,0 +1,18 @@
+# Virtual Environment
+.venv/
+__pycache__/
+*.pyc
+
+# Dataset folders (Bỏ qua dataset nặng hàng chục GB)
+data/
+
+# Model checkpoints lớn
+*.pth
+*.zip
+ffhq-wrinkle-dataset/pretrained_ckpt/
+improve/checkpoints/
+
+# IDE & cache
+.idea/
+.vscode/
+*.log
