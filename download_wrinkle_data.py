@@ -1,8 +1,15 @@
 import os
+import sys
 import zipfile
 import gdown
 
-DATA_DIR = r"e:\ttcn\data"
+if sys.platform == "win32":
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data", "ffhq_wrinkle_base")
 os.makedirs(DATA_DIR, exist_ok=True)
 
 # Google Drive IDs for wrinkle masks

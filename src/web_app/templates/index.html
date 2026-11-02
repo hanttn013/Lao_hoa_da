@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Phân Đoạn Nếp Nhăn & Đánh Giá Lão Hóa Da Mặt (DSnake vs Baseline)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased">
+    <!-- Navbar -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                    <i class="fa-solid fa-dna text-slate-950 text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
+                        Facial Wrinkle & Aging Assessment
+                        <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">DSnake Platform</span>
+                    </h1>
+                    <p class="text-xs text-slate-400 hidden sm:block">Dynamic Snake Convolution (DSConv) · Cross-Attention · Lemperle Clinical Scale</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 text-xs">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 border border-slate-700">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> 3 Mô Hình Đang Trực Tuyến
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        
+        <!-- Controls & Image Selector Bar -->
+        <section class="bg-slate-900/90 rounded-2xl border border-slate-800 p-5 shadow-xl">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
+                
+                <!-- Quick Samples -->
+                <div class="md:col-span-6 space-y-2">
+                    <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-images text-emerald-400"></i> Chọn Ảnh Mẫu Từ Tập Test Chuẩn (N=73 có Ground Truth):
+                    </label>
+                    <div class="flex items-center gap-2">
+                        <select id="sampleSelect" class="bg-slate-800 border border-slate-700 text-slate-100 text-sm rounded-lg px-3 py-2.5 w-full focus:ring-2 focus:ring-emerald-500 outline-none transition">
+                            <option value="">Đang nạp danh sách ảnh mẫu...</option>
+                        </select>
+                        <button id="btnQuick03140" class="px-3 py-2.5 bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 rounded-lg text-xs font-bold whitespace-nowrap transition">
+                            ⚡ Ảnh 03140 (Chuẩn Báo Cáo)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Custom Upload -->
+                <div class="md:col-span-4 space-y-2">
+                    <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up text-cyan-400"></i> Hoặc Tải Ảnh Mặt Mới:
+                    </label>
+                    <input type="file" id="fileUpload" accept="image/*" class="block w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-emerald-400 hover:file:bg-slate-700 cursor-pointer border border-slate-700 rounded-lg bg-slate-800/50">
+                </div>
+
+                <!-- Run CTA Button -->
+                <div class="md:col-span-2 flex items-end">
+                    <button id="btnAnalyze" class="w-full py-2.5 px-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold rounded-lg text-sm shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 transition transform active:scale-95">
+                        <i class="fa-solid fa-play"></i> Phân Tích
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Navigation Tabs -->
+        <div class="border-b border-slate-800 flex space-x-8 text-sm font-medium">
+            <button class="nav-tab active text-emerald-400 border-b-2 border-emerald-400 pb-3 flex items-center gap-2 transition" data-target="tab-analysis">
+                <i class="fa-solid fa-microscope"></i> 1. Image Analysis (Phân Tích Đa Mô Hình)
+            </button>
+            <button class="nav-tab text-slate-400 hover:text-slate-200 border-b-2 border-transparent pb-3 flex items-center gap-2 transition" data-target="tab-morphology">
+                <i class="fa-solid fa-chart-line"></i> 2. Morphometric Results (Hình Thái & Thang Điểm Lemperle)
+            </button>
+            <button class="nav-tab text-slate-400 hover:text-slate-200 border-b-2 border-transparent pb-3 flex items-center gap-2 transition" data-target="tab-evaluation">
+                <i class="fa-solid fa-scale-balanced"></i> 3. Model Evaluation (Đối Đầu & Benchmark)
+            </button>
+        </div>
+
+        <!-- TAB 1: IMAGE ANALYSIS -->
+        <section id="tab-analysis" class="tab-pane space-y-6">
+            
+            <!-- View Selector Options (Mask / Overlay / Heatmap) -->
+            <div class="flex items-center justify-between bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+                <div class="flex items-center gap-2 text-xs font-semibold text-slate-300">
+                    <i class="fa-solid fa-layer-group text-emerald-400"></i> Lớp Trực Quan Hóa:
+                </div>
+                <div class="flex items-center gap-2">
+                    <button class="view-layer-btn active px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-500 text-slate-950" data-layer="overlay">
+                        Lớp Phủ Xanh (Contour Overlay)
+                    </button>
+                    <button class="view-layer-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700" data-layer="mask">
+                        Mặt Nạ Nhị Phân (Binary Mask)
+                    </button>
+                    <button class="view-layer-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700" data-layer="heatmap">
+                        Bản Đồ Nhiệt Giải Thích (XAI Heatmap)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Comparison Cards Grid (4 Columns: Face/GT, Baseline, AttentionUNet, DSnake) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                
+                <!-- Card 1: Input Face & Ground Truth -->
+                <div class="bg-slate-900 rounded-xl border border-slate-800 p-4 space-y-3 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span> Ảnh Gốc & Ground Truth
+                        </span>
+                        <span id="badgeSampleId" class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">ID: ---</span>
+                    </div>
+                    <div class="aspect-square bg-slate-950 rounded-lg overflow-hidden border border-slate-800 relative group flex items-center justify-center">
+                        <img id="imgInputFace" src="/static/placeholder.png" alt="Input Face" class="w-full h-full object-cover">
+                        <div id="gtBadge" class="absolute top-2 left-2 px-2 py-0.5 rounded bg-amber-500/90 text-slate-950 text-[10px] font-bold hidden">
+                            Nhãn Chuyên Gia
+                        </div>
+                    </div>
+                    <div class="text-[11px] text-slate-400 flex justify-between pt-1 border-t border-slate-800/80">
+                        <span>Độ phân giải: 256×256</span>
+                        <span id="gtStatusText" class="text-emerald-400">Sẵn sàng</span>
+                    </div>
+                </div>
+
+                <!-- Card 2: Baseline U-Net -->
+                <div class="bg-slate-900 rounded-xl border border-slate-800 p-4 space-y-3 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span> Baseline U-Net (ICPR 2024)
+                        </span>
+                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">17.26M params</span>
+                    </div>
+                    <div class="aspect-square bg-slate-950 rounded-lg overflow-hidden border border-slate-800 relative flex items-center justify-center">
+                        <img id="imgBaseline" src="/static/placeholder.png" alt="Baseline Prediction" class="w-full h-full object-cover">
+                    </div>
+                    <div class="text-[11px] text-slate-300 flex justify-between pt-1 border-t border-slate-800/80">
+                        <span>Dice: <b id="valBaselineDice" class="text-slate-200">--</b></span>
+                        <span>IoU: <b id="valBaselineIoU" class="text-slate-200">--</b></span>
+                        <span class="text-slate-400"><span id="valBaselineLatency">--</span>ms</span>
+                    </div>
+                </div>
+
+                <!-- Card 3: Attention U-Net -->
+                <div class="bg-slate-900 rounded-xl border border-slate-800 p-4 space-y-3 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-blue-400 flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Attention U-Net
+                        </span>
+                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-900/30 text-blue-400 border border-blue-800/50">17.59M params</span>
+                    </div>
+                    <div class="aspect-square bg-slate-950 rounded-lg overflow-hidden border border-slate-800 relative flex items-center justify-center">
+                        <img id="imgAttention" src="/static/placeholder.png" alt="Attention Prediction" class="w-full h-full object-cover">
+                    </div>
+                    <div class="text-[11px] text-slate-300 flex justify-between pt-1 border-t border-slate-800/80">
+                        <span>Dice: <b id="valAttentionDice" class="text-blue-400">--</b></span>
+                        <span>IoU: <b id="valAttentionIoU" class="text-blue-400">--</b></span>
+                        <span class="text-slate-400"><span id="valAttentionLatency">--</span>ms</span>
+                    </div>
+                </div>
+
+                <!-- Card 4: DSnake (Our Model) -->
+                <div class="bg-slate-900 rounded-xl border border-emerald-500/40 p-4 space-y-3 shadow-xl relative overflow-hidden">
+                    <div class="absolute -top-6 -right-6 w-16 h-16 bg-emerald-500/10 rounded-full blur-xl pointer-events-none"></div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span> DSnake (Our Model)
+                        </span>
+                        <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">DSConv</span>
+                    </div>
+                    <div class="aspect-square bg-slate-950 rounded-lg overflow-hidden border border-emerald-500/30 relative flex items-center justify-center">
+                        <img id="imgDSnake" src="/static/placeholder.png" alt="DSnake Prediction" class="w-full h-full object-cover">
+                    </div>
+                    <div class="text-[11px] text-emerald-300 flex justify-between pt-1 border-t border-slate-800/80">
+                        <span>Dice: <b id="valDSnakeDice" class="text-emerald-400 text-xs">--</b></span>
+                        <span>IoU: <b id="valDSnakeIoU" class="text-emerald-400 text-xs">--</b></span>
+                        <span class="text-slate-400"><span id="valDSnakeLatency">--</span>ms</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 2: MORPHOMETRIC RESULTS -->
+        <section id="tab-morphology" class="tab-pane hidden space-y-6">
+            
+            <!-- Lemperle Clinical Grading Card -->
+            <div class="bg-gradient-to-r from-slate-900 to-slate-900/90 rounded-2xl border border-slate-800 p-6 shadow-xl">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                    <div class="md:col-span-4 flex flex-col items-center justify-center p-4 bg-slate-950/60 rounded-xl border border-slate-800">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Thang Điểm Lão Hóa Lâm Sàng</span>
+                        <div id="lemperleGradeBadge" class="text-4xl font-extrabold text-emerald-400 my-2">CẤP --</div>
+                        <span id="lemperleGradeDesc" class="text-xs text-center text-slate-300 font-medium">Chưa có dữ liệu phân tích</span>
+                    </div>
+                    <div class="md:col-span-8 space-y-3">
+                        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-notes-medical text-emerald-400"></i> Đánh Giá Dựa Trên Thang Đo Lemperle (Clinical Scale 0-4):
+                        </h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Thang đo Lemperle phân loại mức độ rãnh nhăn theo độ sâu cơ học và hình thái học từ Độ 0 (da láng mịn không nhăn) đến Độ 4 (nếp nhăn sâu, hằn rõ kể cả khi cơ mặt thư giãn hoàn toàn). Hệ thống kết hợp phân đoạn DSnake với trích xuất khung xương để lượng hóa khách quan.
+                        </p>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                            <div class="bg-slate-800/50 p-2.5 rounded-lg border border-slate-700/60">
+                                <span class="text-[10px] text-slate-400 block">Tỷ Lệ Nhăn (WAF)</span>
+                                <b id="morphWAF" class="text-sm text-emerald-400 font-mono">--%</b>
+                            </div>
+                            <div class="bg-slate-800/50 p-2.5 rounded-lg border border-slate-700/60">
+                                <span class="text-[10px] text-slate-400 block">Tổng Chiều Dài (Skeleton)</span>
+                                <b id="morphLength" class="text-sm text-cyan-400 font-mono">-- px</b>
+                            </div>
+                            <div class="bg-slate-800/50 p-2.5 rounded-lg border border-slate-700/60">
+                                <span class="text-[10px] text-slate-400 block">Mật Độ Rãnh Nhăn</span>
+                                <b id="morphDensity" class="text-sm text-amber-400 font-mono">--</b>
+                            </div>
+                            <div class="bg-slate-800/50 p-2.5 rounded-lg border border-slate-700/60">
+                                <span class="text-[10px] text-slate-400 block">Tổng Pixel Nhăn</span>
+                                <b id="morphPixels" class="text-sm text-purple-400 font-mono">--</b>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skeleton & Regional Analysis Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                <!-- Skeleton Image -->
+                <div class="md:col-span-5 bg-slate-900 rounded-xl border border-slate-800 p-4 space-y-3">
+                    <span class="text-xs font-bold text-slate-200 flex items-center gap-2">
+                        <i class="fa-solid fa-bezier-curve text-teal-400"></i> Khung Xương Rãnh Nhăn (Skeletonized Paths)
+                    </span>
+                    <div class="aspect-square bg-slate-950 rounded-lg overflow-hidden border border-slate-800 flex items-center justify-center">
+                        <img id="imgSkeleton" src="/static/placeholder.png" alt="Skeletonized Mask" class="w-full h-full object-cover">
+                    </div>
+                    <p class="text-[11px] text-slate-400 italic">
+                        Giải thuật làm mảnh (Skeletonization) rút gọn rãnh nhăn về độ dày 1 pixel để đo chiều dài thực tế, không bị ảnh hưởng bởi độ nở viền.
+                    </p>
+                </div>
+
+                <!-- Regional Breakdown Table -->
+                <div class="md:col-span-7 bg-slate-900 rounded-xl border border-slate-800 p-4 space-y-3">
+                    <span class="text-xs font-bold text-slate-200 flex items-center gap-2">
+                        <i class="fa-solid fa-table-cells text-emerald-400"></i> Phân Bố Nếp Nhăn Theo 4 Vùng Giải Phẫu Khuôn Mặt
+                    </span>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-800/80 text-[11px] uppercase tracking-wider text-slate-400">
+                                <tr>
+                                    <th class="py-2.5 px-3 rounded-l-lg">Phân Vùng Khuôn Mặt</th>
+                                    <th class="py-2.5 px-3">Số Pixel Nhăn</th>
+                                    <th class="py-2.5 px-3">Mật Độ Vùng (%)</th>
+                                    <th class="py-2.5 px-3 rounded-r-lg">Mức Độ Lão Hóa</th>
+                                </tr>
+                            </thead>
+                            <tbody id="regionalTableBody" class="divide-y divide-slate-800">
+                                <tr><td colspan="4" class="py-4 text-center text-slate-500">Chưa có kết quả</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- TAB 3: MODEL EVALUATION & BENCHMARK -->
+        <section id="tab-evaluation" class="tab-pane hidden space-y-6">
+            
+            <div class="bg-slate-900 rounded-xl border border-slate-800 p-5 shadow-xl space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-trophy text-amber-400"></i> Bảng Đối Đầu Trực Tiếp Các Kiến Trúc (Head-to-Head Evaluation)
+                        </h2>
+                        <p class="text-xs text-slate-400">So sánh chỉ số thực nghiệm trên ảnh hiện tại với Ground Truth chuyên gia.</p>
+                    </div>
+                    <div class="text-[11px] px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold">
+                        Suy Luận Checkpoint Thật 100%
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-300">
+                        <thead class="bg-slate-800 text-[11px] uppercase tracking-wider text-slate-400 border-b border-slate-700">
+                            <tr>
+                                <th class="py-3 px-4">Kiến Trúc Mô Hình</th>
+                                <th class="py-3 px-3">Số Tham Số</th>
+                                <th class="py-3 px-3">Dice Coefficient</th>
+                                <th class="py-3 px-3">IoU (Jaccard)</th>
+                                <th class="py-3 px-3">Precision</th>
+                                <th class="py-3 px-3">Recall</th>
+                                <th class="py-3 px-3">HD95 (px) ↓</th>
+                                <th class="py-3 px-3">Latency (ms)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="evalTableBody" class="divide-y divide-slate-800">
+                            <tr><td colspan="8" class="py-6 text-center text-slate-500">Nhấn "Phân Tích" để hiển thị đối đầu</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="p-3 bg-slate-950/80 rounded-lg border border-slate-800 text-[11px] text-slate-400 space-y-1">
+                    <p><b class="text-emerald-400">Ưu điểm vượt trội của DSnake:</b> Nhờ tích hợp <b>Dynamic Snake Convolution (DSConv)</b> uốn lượn theo quỹ đạo rãnh nhăn thực tế, DSnake khắc phục hoàn toàn nhược điểm đứt gãy nét nhăn của tích chập $3 \times 3$ thông thường, đạt độ nhạy (Recall) và Dice cao nhất trên tập benchmark.</p>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+        Báo Cáo Thực Tập Tốt Nghiệp HUFLIT · Đề tài Phân Đoạn Nếp Nhăn & Đánh Giá Lão Hóa Da Mặt · Cập nhật 2026
+    </footer>
+
+    <!-- App Script -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
+
